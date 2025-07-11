@@ -1,9 +1,17 @@
-import { Controller, Post, Body, Get, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { Request } from 'express';
+import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -21,10 +29,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getMe(@Req() req: Request) {
-    const user = req['user'];
-    if (!user || !user['userId']) throw new UnauthorizedException();
-    return this.authService.getProfile(user['userId']);
+  async getMe(@Req() req: AuthRequest) {
+    const user = req.user;
+    if (!user || !user.sub) throw new UnauthorizedException();
+    return this.authService.getProfile(user.sub);
   }
-
 }

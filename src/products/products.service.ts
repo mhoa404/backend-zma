@@ -2,7 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from '../schemas/product.schema';
 import { Category, CategoryDocument } from '../schemas/category.schema';
-import { Model } from 'mongoose';
+import { CartItem, CartItemDocument } from '../schemas/cart-item.schema';
+
+import { Model, Types } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
@@ -11,6 +13,7 @@ export class ProductsService {
   constructor(
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+    @InjectModel(CartItem.name) private cartModel: Model<CartItemDocument>,
   ) {}
 
   async create(dto: CreateProductDto) {
@@ -20,12 +23,12 @@ export class ProductsService {
   async findAll(isAdmin = false) {
     const products = await this.productModel
       .find(isAdmin ? {} : { available: true })
-      .populate('category_id') // vẫn dùng populate
+      .populate('category_id')
       .exec();
 
     if (!isAdmin) {
-      return products.filter(p => {
-        const category = p.category_id as any;
+      return products.filter((p) => {
+        const category = p.category_id as any as Category;
         return category?.is_active !== false;
       });
     }
@@ -64,5 +67,29 @@ export class ProductsService {
     const deleted = await this.productModel.findByIdAndDelete(id).exec();
     if (!deleted) throw new NotFoundException('Không tìm thấy sản phẩm');
     return { message: 'Đã xoá sản phẩm' };
+  }
+
+  async addToCart(userId: string, productId: string) {
+    const product = await this.productModel.findById(productId);
+    if (!product) {
+      throw new NotFoundException('Sản phẩm không tồn tại');
+    }
+
+    const existing = await this.cartModel.findOne({
+      user_id: new Types.ObjectId(userId),
+      product_id: productId,
+    });
+
+    if (existing) {
+      existing.quantity += 1;
+      return existing.save();
+    }
+
+    const created = new this.cartModel({
+      user_id: new Types.ObjectId(userId),
+      product_id: productId,
+      quantity: 1,
+    });
+    return created.save();
   }
 }

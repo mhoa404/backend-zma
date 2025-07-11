@@ -28,7 +28,11 @@ export class AuthService {
     });
     return {
       message: 'Đăng ký thành công',
-      user: { _id: createdUser._id, email: createdUser.email, name: createdUser.name },
+      user: {
+        _id: createdUser._id,
+        email: createdUser.email,
+        name: createdUser.name,
+      },
     };
   }
 
@@ -37,13 +41,21 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
     }
-    const payload = { 
-      sub: user._id, 
+    const payload = {
+      sub: user._id,
+      name: user.name,
       email: user.email,
-      role: user.role, 
+      role: user.role,
     };
+    console.log('Đăng nhập user:', user);
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     };
   }
 

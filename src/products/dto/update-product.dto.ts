@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsNumber, IsBoolean, IsMongoId } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsMongoId,
+} from 'class-validator';
 
 export class UpdateProductDto {
   @IsOptional()

@@ -19,7 +19,7 @@ import { User, UserSchema } from '../schemas/user.schema';
       imports: [ConfigModule],
       useFactory: (cfg: ConfigService) => ({
         secret: cfg.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '15m' },
+        signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
     }),

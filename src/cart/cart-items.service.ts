@@ -46,7 +46,7 @@ export class CartItemsService {
   }
 
   async clearCart(userId: string) {
-    await this.cartModel.deleteMany({ user_id: userId });
+    await this.cartModel.deleteMany({ user_id: new Types.ObjectId(userId) });
     return { message: 'Đã xoá toàn bộ giỏ hàng' };
   }
 }

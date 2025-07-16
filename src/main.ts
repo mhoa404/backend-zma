@@ -7,10 +7,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  app.enableCors({
-    origin: ['*'], // 👈 chính xác domain frontend bạn đang chạy
-    credentials: true,
-  });
+  app.enableCors();
 
   await app.listen(process.env.PORT || 3000);
 }

@@ -14,6 +14,7 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { AddToCartDto } from './dto/add-to-cart.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { AuthRequest } from 'src/common/interfaces/auth-request.interface';
@@ -74,12 +75,7 @@ export class ProductsController {
 
   @Post('add')
   @UseGuards(JwtAuthGuard)
-  async addToCart(
-    @Request() req: AuthRequest,
-    @Body('product_id') productId: string,
-  ) {
-    console.log('req.user =', req.user);
-    console.log('body.product_id =', productId);
-    return this.productsService.addToCart(req.user!.sub, productId);
+  async addToCart(@Request() req: AuthRequest, @Body() dto: AddToCartDto) {
+    return this.productsService.addToCart(req.user!.sub, dto.productId);
   }
 }

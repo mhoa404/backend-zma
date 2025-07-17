@@ -1,8 +1,7 @@
-// src/orders/orders.service.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order, OrderDocument } from '../schemas/order.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { CartItem, CartItemDocument } from '../schemas/cart-item.schema';
 import { Product } from '../schemas/product.schema';
@@ -15,10 +14,12 @@ export class OrdersService {
   ) {}
 
   async createOrder(userId: string, dto: CreateOrderDto) {
+    const uid = new Types.ObjectId(userId);
+
     const cartItems = await this.cartModel
       .find({
         _id: { $in: dto.cart_item_ids },
-        user_id: userId,
+        user_id: uid,
       })
       .populate('product_id');
 
@@ -33,7 +34,7 @@ export class OrdersService {
     }, 0);
 
     const order = await this.orderModel.create({
-      user_id: userId,
+      user_id: uid,
       address_id: dto.address_id,
       voucher_id: dto.voucher_id ?? null,
       total_price,
@@ -43,7 +44,7 @@ export class OrdersService {
 
     await this.cartModel.deleteMany({
       _id: { $in: dto.cart_item_ids },
-      user_id: userId,
+      user_id: uid,
     });
 
     return order;
@@ -51,12 +52,14 @@ export class OrdersService {
 
   async getOrdersByUser(userId: string) {
     return this.orderModel
-      .find({ user_id: userId })
+      .find({ user_id: new Types.ObjectId(userId) })
       .sort({ created_at: -1 })
       .exec();
   }
 
   async getOrderDetail(id: string, userId: string) {
-    return this.orderModel.findOne({ _id: id, user_id: userId }).exec();
+    return this.orderModel
+      .findOne({ _id: id, user_id: new Types.ObjectId(userId) })
+      .exec();
   }
 }

@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from '../schemas/product.schema';
 import { Category, CategoryDocument } from '../schemas/category.schema';
 import { CartItem, CartItemDocument } from '../schemas/cart-item.schema';
-
 import { Model, Types } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';

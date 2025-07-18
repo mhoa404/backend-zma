@@ -28,6 +28,16 @@ export class AddressesService {
     });
   }
 
+  async getAddressById(userId: string, id: string) {
+    const address = await this.addressModel.findOne({
+      _id: id,
+      user_id: this.toObjectId(userId),
+    });
+
+    if (!address) throw new NotFoundException('Không tìm thấy địa chỉ');
+    return address;
+  }
+
   async updateAddress(userId: string, id: string, dto: UpdateAddressDto) {
     if (dto.is_default === true) {
       // Reset các địa chỉ khác về false

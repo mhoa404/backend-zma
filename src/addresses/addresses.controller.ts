@@ -25,6 +25,11 @@ export class AddressesController {
     return this.addressService.getAddressesByUser(req.user!.sub);
   }
 
+  @Get(':id')
+  getAddressById(@Req() req: AuthRequest, @Param('id') id: string) {
+    return this.addressService.getAddressById(req.user!.sub, id);
+  }
+
   @Post()
   create(@Req() req: AuthRequest, @Body() dto: CreateAddressDto) {
     return this.addressService.createAddress(req.user!.sub, dto);

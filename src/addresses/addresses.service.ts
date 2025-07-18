@@ -21,13 +21,6 @@ export class AddressesService {
       .sort({ created_at: -1 });
   }
 
-  async createAddress(userId: string, dto: CreateAddressDto) {
-    return this.addressModel.create({
-      user_id: this.toObjectId(userId),
-      ...dto,
-    });
-  }
-
   async getAddressById(userId: string, id: string) {
     const address = await this.addressModel.findOne({
       _id: id,
@@ -36,6 +29,13 @@ export class AddressesService {
 
     if (!address) throw new NotFoundException('Không tìm thấy địa chỉ');
     return address;
+  }
+
+  async createAddress(userId: string, dto: CreateAddressDto) {
+    return this.addressModel.create({
+      user_id: this.toObjectId(userId),
+      ...dto,
+    });
   }
 
   async updateAddress(userId: string, id: string, dto: UpdateAddressDto) {

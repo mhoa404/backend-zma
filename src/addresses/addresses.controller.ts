@@ -26,7 +26,7 @@ export class AddressesController {
   }
 
   @Get(':id')
-  getAddressById(@Req() req: AuthRequest, @Param('id') id: string) {
+  getById(@Req() req: AuthRequest, @Param('id') id: string) {
     return this.addressService.getAddressById(req.user!.sub, id);
   }
 

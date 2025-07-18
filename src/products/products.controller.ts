@@ -76,6 +76,6 @@ export class ProductsController {
   @Post('add')
   @UseGuards(JwtAuthGuard)
   async addToCart(@Request() req: AuthRequest, @Body() dto: AddToCartDto) {
-    return this.productsService.addToCart(req.user!.sub, dto.productId);
+    return this.productsService.addToCart(req.user!.sub, dto.product_id);
   }
 }
